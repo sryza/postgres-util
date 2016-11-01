@@ -1,6 +1,6 @@
 """
 Usage:
-    python csv_to_postgres.py <csv file name> <schema_name.table_name>
+    python csv_to_postgres.py <csv file name> <schema_name.table_name> | psql <database url>
 """
 
 import sys
@@ -23,9 +23,12 @@ if __name__ == '__main__':
     column_names = map(format_column_name, column_names)
 
     column_definitions_str = '\n  ' + ',\n  '.join(['\"%s\" varchar' % col for col in column_names])
+    drop_table_command = 'DROP TABLE IF EXISTS %s;' % table_name
     create_table_command = 'CREATE TABLE %s (%s\n);' % (table_name, column_definitions_str)
     copy_file_command = "\\copy %s FROM \'%s\' DELIMITER ',' CSV HEADER;" % (table_name, file_name)
 
+    print(drop_table_command)
+    print()
     print(create_table_command)
     print()
     print(copy_file_command)
